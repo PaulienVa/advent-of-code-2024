@@ -4,7 +4,7 @@ fun main() {
 
     fun List<Int>.isAscendingOrDescending() = this.sorted() == this || this.sortedDescending() == this
 
-    fun List<Int>.safeOrNot(): Boolean {
+    fun List<Int>.safe(): Boolean {
         if (isAscendingOrDescending()) {
             val differences = (this.size - 1 downTo 1).map { abs(this[it] - this[it - 1]) }
             return differences.all { it in 1..3 }
@@ -14,13 +14,13 @@ fun main() {
     }
 
     fun part1(input: List<String>): Int {
-        return input.map { it.split(" ").map { nr -> nr.toInt() } }.filter { it.safeOrNot() }.size
+        return input.map { it.split(" ").map { nr -> nr.toInt() } }.filter { it.safe() }.size
     }
 
     fun removeOneAndCheckIfSafe(records: List<List<Int>>): Int {
         var count = 0
         records.forEach {
-            if (it.safeOrNot()) {
+            if (it.safe()) {
                 count++
             } else {
                 var tempList = it.toMutableList()
@@ -28,7 +28,7 @@ fun main() {
                     it.forEachIndexed { index, _ ->
                         if (index <= tempList.size) {
                             tempList.removeAt(index)
-                            if (tempList.safeOrNot()) {
+                            if (tempList.safe()) {
                                 count++
                                 return@escape
                             } else {
