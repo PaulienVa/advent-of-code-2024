@@ -10,28 +10,24 @@ fun main() {
                             input[lineIndex - 1][charIndex - 1] == "M" && input[lineIndex - 1][charIndex + 1] == "S" &&
                             input[lineIndex + 1][charIndex - 1] == "M" && input[lineIndex + 1][charIndex + 1] == "S"
                         ) {
-                            (lineIndex to charIndex).println()
                             count++
                         }
                         if (
                             input[lineIndex - 1][charIndex - 1] == "S" && input[lineIndex - 1][charIndex + 1] == "M" &&
                             input[lineIndex + 1][charIndex - 1] == "S" && input[lineIndex + 1][charIndex + 1] == "M"
                         ) {
-                            (lineIndex to charIndex).println()
                             count++
                         }
                         if (
                             input[lineIndex - 1][charIndex - 1] == "M" && input[lineIndex - 1][charIndex + 1] == "M" &&
                             input[lineIndex + 1][charIndex - 1] == "S" && input[lineIndex + 1][charIndex + 1] == "S"
                         ) {
-                            (lineIndex to charIndex).println()
                             count++
                         }
                         if (
                             input[lineIndex - 1][charIndex - 1] == "S" && input[lineIndex - 1][charIndex + 1] == "S" &&
                             input[lineIndex + 1][charIndex - 1] == "M" && input[lineIndex + 1][charIndex + 1] == "M"
                         ) {
-                            (lineIndex to charIndex).println()
                             count++
                         }
                     }
@@ -106,7 +102,7 @@ fun main() {
     val testInput = readInput("Day04_test")
 
     println(part1(testInput))
-//    check(part1(testInput) == 18)
+    check(part1(testInput) == 18)
     check(part2(testInput) == 9)
 
     // Read the input from the `src/Day01.txt` file.
