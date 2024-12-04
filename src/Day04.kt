@@ -43,50 +43,51 @@ fun main() {
         input.forEachIndexed { lineIndex, line ->
             line.forEachIndexed { charIndex, element ->
                 if (element == "X") {
-                    if (charIndex >= 3 &&
-                        (line[charIndex - 1] == "M" && line[charIndex - 2] == "A" && line[charIndex - 3] == "S")
-                    ) {
-                        count++
-
+                    if (charIndex >= 3) {
+                        if (line[charIndex - 1] == "M" && line[charIndex - 2] == "A" && line[charIndex - 3] == "S") {
+                            count++
+                        }
+                        if (lineIndex >= 3 &&
+                            (input[lineIndex - 1][charIndex - 1] == "M" && input[lineIndex - 2][charIndex - 2] == "A" && input[lineIndex - 3][charIndex - 3] == "S")
+                        ) {
+                            count++
+                        }
+                        if (lineIndex < input.size - 3 &&
+                            (input[lineIndex + 1][charIndex - 1] == "M" && input[lineIndex + 2][charIndex - 2] == "A" && input[lineIndex + 3][charIndex - 3] == "S")
+                        ) {
+                            count++
+                        }
                     }
+                    if (lineIndex >= 3) {
+                        if (input[lineIndex - 1][charIndex] == "M" && input[lineIndex - 2][charIndex] == "A" && input[lineIndex - 3][charIndex] == "S") {
+                            count++
+                        }
+                        if (charIndex < line.size - 3 &&
+                            (input[lineIndex - 1][charIndex + 1] == "M" && input[lineIndex - 2][charIndex + 2] == "A" && input[lineIndex - 3][charIndex + 3] == "S")
+                        ) {
+                            count++
+                        }
+                    }
+
+                    if (lineIndex < input.size - 3) {
+                        if (input[lineIndex + 1][charIndex] == "M" && input[lineIndex + 2][charIndex] == "A" && input[lineIndex + 3][charIndex] == "S") {
+                            count++
+                        }
+                        if (lineIndex < input.size - 3 && charIndex < line.size - 3 &&
+                            (input[lineIndex + 1][charIndex + 1] == "M" && input[lineIndex + 2][charIndex + 2] == "A" && input[lineIndex + 3][charIndex + 3] == "S")  // cross 4
+                        ) {
+                            count++
+                        }
+                    }
+
                     if ((charIndex < line.size - 3) &&
                         (line[charIndex + 1] == "M" && line[charIndex + 2] == "A" && line[charIndex + 3] == "S")
                     ) {
                         count++
                     }
-                    if (lineIndex < input.size - 3 &&
-                        (input[lineIndex + 1][charIndex] == "M" && input[lineIndex + 2][charIndex] == "A" && input[lineIndex + 3][charIndex] == "S")
-                    ) {
-                        count++
-                    }
-                    if (lineIndex >= 3 &&
-                        (input[lineIndex - 1][charIndex] == "M" && input[lineIndex - 2][charIndex] == "A" && input[lineIndex - 3][charIndex] == "S")
-                    ) {
-                        count++
-                    }
-                    if (lineIndex >= 3 && charIndex < line.size - 3 &&
-                        (input[lineIndex - 1][charIndex + 1] == "M" && input[lineIndex - 2][charIndex + 2] == "A" && input[lineIndex - 3][charIndex + 3] == "S")
-                    ) {
-                        count++
-                    }
-                    if (lineIndex >= 3 && charIndex >= 3 && (input[lineIndex - 1][charIndex - 1] == "M" && input[lineIndex - 2][charIndex - 2] == "A" && input[lineIndex - 3][charIndex - 3] == "S")) {
-                        count++
-                    }
-                    if (lineIndex < input.size - 3 && charIndex >= 3 &&
-                        (input[lineIndex + 1][charIndex - 1] == "M" && input[lineIndex + 2][charIndex - 2] == "A" && input[lineIndex + 3][charIndex - 3] == "S")
-                    ) {
-                        count++
-                    }
-                    if (lineIndex < input.size - 3 && charIndex < line.size - 3 &&
-                        (input[lineIndex + 1][charIndex + 1] == "M" && input[lineIndex + 2][charIndex + 2] == "A" && input[lineIndex + 3][charIndex + 3] == "S")  // cross 4
-                    ) {
-                        count++
-                    }
                 }
-
             }
         }
-        count.println()
         return count
     }
 
@@ -101,7 +102,7 @@ fun main() {
     // Or read a large test input from the `src/Day01_test.txt` file:
     val testInput = readInput("Day04_test")
 
-    println(part1(testInput))
+    println("Part 1 with testInput: ${part1(testInput)}")
     check(part1(testInput) == 18)
     check(part2(testInput) == 9)
 
