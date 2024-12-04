@@ -19,3 +19,18 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
+
+
+class Matrix(input:List<String>) {
+    val matrix = input.map { it.toCharArray().toList().map { char -> char.toString() } }
+
+    fun horizontalLine(verticalIndex: Int) = matrix[verticalIndex]
+
+    fun findCoordinatesOfValue(value: String): List<Pair<Int,Int>> {
+        return matrix.mapIndexed { verticalIndex, strings ->
+            verticalIndex to strings.mapIndexedNotNull { horizontalIndex, matrixValue -> horizontalIndex.takeIf { matrixValue == value } }
+        }.map {
+            (verticalIndex, listOfHorizontalIndex) -> listOfHorizontalIndex.map { it to verticalIndex }
+        }.flatten()
+    }
+}
