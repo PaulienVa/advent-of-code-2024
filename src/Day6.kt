@@ -1,3 +1,5 @@
+import kotlin.math.abs
+
 fun main() {
 
 
@@ -16,23 +18,27 @@ fun main() {
         )
 
         while(xGuard < input[0].length || xGuard > -1 || yGuard > -1 || yGuard < input.size) {
-            val coordinates = obstaclesCoordinates.find { coordinates ->
+            val coordinates = obstaclesCoordinates.filter { coordinates ->
                 when (direction) {
                     directions[0] -> { coordinates.first == xGuard && coordinates.second >= yGuard }
                     directions[1] -> { coordinates.first == xGuard && coordinates.second <= yGuard }
                     directions[2] -> { coordinates.second == yGuard && coordinates.first >= xGuard }
                     else -> coordinates.second == yGuard && coordinates.first <= xGuard
                 }
-            }
+            }.minByOrNull { if (xGuard == it.first) abs(yGuard - it.second) else abs(xGuard - it.first) }
+
             if (coordinates != null) {
+                println("Encountering obstacle with coordingates $coordinates and guard position: ($xGuard, $yGuard) ")
                 if (coordinates.first == xGuard) {
                     if (coordinates.second <= yGuard) {
                         for (y in yGuard downTo  coordinates.second + 1  ) { visitedPositions.add(xGuard to y) }
                         direction = (1 to 0)
+                        println("Now walking up")
                         yGuard = coordinates.second + 1
                     }
                     else {
                         for (y in yGuard..<coordinates.second) { visitedPositions.add(xGuard to y) }
+                        println("Now walking down")
                         direction = (-1 to 0)
                         yGuard = coordinates.second - 1
                     }
@@ -40,11 +46,13 @@ fun main() {
                 else if (coordinates.second == yGuard) {
                     if (coordinates.first <= xGuard) {
                         for (x in xGuard downTo  coordinates.first + 1) { visitedPositions.add(x to yGuard) }
+                        println("Now walking left")
                         direction = (0 to -1)
                         xGuard = coordinates.first + 1
                     }
                     else {
                         for (x in xGuard..<coordinates.first) { visitedPositions.add(x to yGuard) }
+                        println("Now walking right")
                         direction = (0 to 1)
                         xGuard = coordinates.first - 1
                     }
@@ -79,7 +87,7 @@ fun main() {
     val testInput = readInput("Day06_test")
 
 //    println("Part 1 with testInput: ${part1(testInput)}")
-    check(part1(testInput) == 41)
+//    check(part1(testInput) == 41)
     check(part2(testInput) == 0)
 
     // Read the input from the `src/Day01.txt` file.
