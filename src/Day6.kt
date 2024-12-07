@@ -2,13 +2,19 @@ import kotlin.math.abs
 
 fun main() {
 
+    val directions = arrayOf(
+        (0 to 1), // vertical down
+        (0 to -1), // vertical up
+        (1 to 0), // horizontal right
+        (-1 to 0) // horizontal left
+    )
+
     fun inGrid(xGuard: Int, input: List<String>, yGuard: Int) =
         xGuard < input[0].length || xGuard > -1 || yGuard > -1 || yGuard < input.size
 
     fun nextUpcomingObstacle(
         obstaclesCoordinates: List<Pair<Int, Int>>,
         direction: Pair<Int, Int>,
-        directions: Array<Pair<Int, Int>>,
         xGuard: Int,
         yGuard: Int
     ) = obstaclesCoordinates.filter { coordinates ->
@@ -33,12 +39,12 @@ fun main() {
         coordinates: Pair<Int, Int>,
         xGuard: Int,
         yGuard: Int,
-        visitedPositions: MutableSet<Pair<Int, Int>>,
         direction: Pair<Int, Int>
-    ): Triple<Pair<Int, Int>, Int, Int> {
+    ): Triple<Pair<Int, Int>, Pair<Int, Int>, MutableSet<Pair<Int, Int>>> {
         var xGuard1 = xGuard
         var yGuard1 = yGuard
         var direction1 = direction
+        val visitedPositions = mutableSetOf<Pair<Int, Int>>()
         if (coordinates.first == xGuard1) {
             if (coordinates.second <= yGuard1) {
                 for (y in yGuard1 downTo coordinates.second + 1) {
@@ -72,7 +78,7 @@ fun main() {
                 xGuard1 = coordinates.first - 1
             }
         }
-        return Triple(direction1, xGuard1, yGuard1)
+        return Triple(direction1, xGuard1 to yGuard1, visitedPositions)
     }
 
     fun leaveTheGrid(
@@ -108,22 +114,21 @@ fun main() {
         val visitedPositions = mutableSetOf(Pair(xGuard, yGuard))
         var direction = (0 to -1)
 
-        val directions = arrayOf(
-            (0 to 1), // vertical down
-            (0 to -1), // vertical up
-            (1 to 0), // horizontal right
-            (-1 to 0) // horizontal left
-        )
-
         while (inGrid(xGuard, input, yGuard)) {
-            val coordinates = nextUpcomingObstacle(obstaclesCoordinates, direction, directions, xGuard, yGuard)
+            val coordinates = nextUpcomingObstacle(obstaclesCoordinates, direction, xGuard, yGuard)
 
             if (coordinates != null) {
                 println("Encountering obstacle with coordinates $coordinates and guard position: ($xGuard, $yGuard) ")
-                val (newDirection, newXGuard, newYGuard) = walkUntilNextObstacle(coordinates, xGuard, yGuard, visitedPositions, direction)
+                val (newDirection, newGuardPosition, newlyVisitedPositions) = walkUntilNextObstacle(
+                    coordinates,
+                    xGuard,
+                    yGuard,
+                    direction
+                )
                 direction = newDirection
-                xGuard = newXGuard
-                yGuard = newYGuard
+                xGuard = newGuardPosition.first
+                yGuard = newGuardPosition.second
+                visitedPositions.addAll(newlyVisitedPositions)
             } else {
                 leaveTheGrid(direction, yGuard, visitedPositions, xGuard, input)
                 break
@@ -132,16 +137,67 @@ fun main() {
         return visitedPositions
     }
 
-    fun part1(input: List<String>): Int {
-        val visitedPositions = findTheGuardRoutes(input)
+    fun findTheGuardRoutesAndLoops(input: List<String>, obstaclesCoordinates: List<Pair<Int, Int>>, start: Pair<Int, Int>): Boolean {
+//        val map = Matrix(input)
+        var xGuard = start.first
+        var yGuard = start.second
+        val turns = mutableSetOf<Pair<Pair<Int,Int>, Pair<Int, Int>>>()
+        val visitedPositions = mutableSetOf<Pair<Int, Int>>()
+        var direction = (0 to -1)
+        var looping = false
 
-        visitedPositions.size.println()
-        return visitedPositions.size
+        while (inGrid(xGuard, input, yGuard)) {
+            val coordinates = nextUpcomingObstacle(obstaclesCoordinates, direction, xGuard, yGuard)
+
+            if (coordinates != null) {
+                println("Encountering obstacle with coordinates $coordinates and guard position: ($xGuard, $yGuard) ")
+                val (newDirection, newGuardPosition, newlyVisitedPositions) = walkUntilNextObstacle(
+                    coordinates,
+                    xGuard,
+                    yGuard,
+                    direction
+                )
+                if(newGuardPosition to newDirection in turns) {
+                    looping = true
+                    break
+                } else {
+                    turns.add(newGuardPosition to newDirection)
+                    direction = newDirection
+                    xGuard = newGuardPosition.first
+                    yGuard = newGuardPosition.second
+                    visitedPositions.addAll(newlyVisitedPositions)
+                }
+            } else {
+                leaveTheGrid(direction, yGuard, visitedPositions, xGuard, input)
+                break
+            }
+        }
+        return looping
     }
 
-    fun part2(input: List<String>): Int {
-        val visitedPositions = findTheGuardRoutes(input)
-        return 0
+    fun part1(input: List<String>): MutableSet<Pair<Int, Int>> {
+        return findTheGuardRoutes(input)
+    }
+
+    fun part2(input: List<String>, visitedPositions: MutableSet<Pair<Int, Int>>): Int {
+        val map = Matrix(input)
+        var (xGuard, yGuard) = map.findCoordinatesOfValue("^")[0]
+        var obstaclesCoordinates = map.findCoordinatesOfValue("#").toMutableList()
+        val newObstacles = mutableSetOf<Pair<Int, Int>>()
+
+        for (visitedPosition in visitedPositions) {
+            obstaclesCoordinates.add(visitedPosition)
+            "Setting obstacle at $visitedPosition".println()
+            if (findTheGuardRoutesAndLoops(input, obstaclesCoordinates, xGuard to yGuard)) {
+                "Validating obstacle at $visitedPosition".println()
+                newObstacles.add(visitedPosition)
+            }
+            obstaclesCoordinates.remove(visitedPosition)
+        }
+
+        newObstacles.println()
+
+        return newObstacles.size
     }
 
 
@@ -149,14 +205,15 @@ fun main() {
     val testInput = readInput("Day06_test")
 
 //    println("Part 1 with testInput: ${part1(testInput)}")
-//    check(part1(testInput) == 41)
-//    check(part2(testInput) == 6)
+    val visitedPostions = part1(testInput)
+    check(visitedPostions.size == 41)
+    check(part2(testInput, visitedPostions) == 6)
 
     // Read the input from the `src/Day01.txt` file.
     val input = readInput("Day06")
-    "Part 1 ".println()
-    part1(input).println()
-//    "Part 2 ".println()
-//    part2(input).println()
+//    "Part 1 ".println()
+//    part1(input).println()
+    "Part 2 ".println()
+    part2(input, visitedPostions).println()
 
 }

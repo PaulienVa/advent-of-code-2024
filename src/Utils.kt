@@ -22,7 +22,23 @@ fun Any?.println() = println(this)
 
 
 class Matrix(input:List<String>) {
-    val matrix = input.map { it.toCharArray().toList().map { char -> char.toString() } }
+    val matrix = input.map { it.toCharArray().toMutableList().map { char -> char.toString() }.toMutableList() }
+
+    fun getValue(coordinates: Pair<Int, Int>): String = matrix[coordinates.second][coordinates.first]
+
+    fun setValue(coordinates: Pair<Int, Int>, value: String) {
+        matrix[coordinates.second][coordinates.first] = value
+    }
+
+    fun allPositions(): List<Pair<Int, Int>> {
+        val positions = mutableListOf<Pair<Int, Int>>()
+        for ( y in matrix.indices) {
+            for (x in matrix[y].indices) {
+                positions.add(x to y)
+            }
+        }
+        return positions
+    }
 
     fun horizontalLine(verticalIndex: Int) = matrix[verticalIndex]
 
