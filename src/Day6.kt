@@ -51,13 +51,13 @@ fun main() {
                     visitedPositions.add(xGuard1 to y)
                 }
                 direction1 = (1 to 0)
-                println("Now walking up")
+//                println("Now walking up")
                 yGuard1 = coordinates.second + 1
             } else {
                 for (y in yGuard1..<coordinates.second) {
                     visitedPositions.add(xGuard1 to y)
                 }
-                println("Now walking down")
+//                println("Now walking down")
                 direction1 = (-1 to 0)
                 yGuard1 = coordinates.second - 1
             }
@@ -66,14 +66,14 @@ fun main() {
                 for (x in xGuard1 downTo coordinates.first + 1) {
                     visitedPositions.add(x to yGuard1)
                 }
-                println("Now walking left")
+//                println("Now walking left")
                 direction1 = (0 to -1)
                 xGuard1 = coordinates.first + 1
             } else {
                 for (x in xGuard1..<coordinates.first) {
                     visitedPositions.add(x to yGuard1)
                 }
-                println("Now walking right")
+//                println("Now walking right")
                 direction1 = (0 to 1)
                 xGuard1 = coordinates.first - 1
             }
@@ -118,7 +118,7 @@ fun main() {
             val coordinates = nextUpcomingObstacle(obstaclesCoordinates, direction, xGuard, yGuard)
 
             if (coordinates != null) {
-                println("Encountering obstacle with coordinates $coordinates and guard position: ($xGuard, $yGuard) ")
+//                println("Encountering obstacle with coordinates $coordinates and guard position: ($xGuard, $yGuard) ")
                 val (newDirection, newGuardPosition, newlyVisitedPositions) = walkUntilNextObstacle(
                     coordinates,
                     xGuard,
@@ -150,7 +150,7 @@ fun main() {
             val coordinates = nextUpcomingObstacle(obstaclesCoordinates, direction, xGuard, yGuard)
 
             if (coordinates != null) {
-                println("Encountering obstacle with coordinates $coordinates and guard position: ($xGuard, $yGuard) ")
+//                println("Encountering obstacle with coordinates $coordinates and guard position: ($xGuard, $yGuard) ")
                 val (newDirection, newGuardPosition, newlyVisitedPositions) = walkUntilNextObstacle(
                     coordinates,
                     xGuard,
@@ -187,9 +187,9 @@ fun main() {
 
         for (visitedPosition in visitedPositions) {
             obstaclesCoordinates.add(visitedPosition)
-            "Setting obstacle at $visitedPosition".println()
+//            "Setting obstacle at $visitedPosition".println()
             if (findTheGuardRoutesAndLoops(input, obstaclesCoordinates, xGuard to yGuard)) {
-                "Validating obstacle at $visitedPosition".println()
+//                "Validating obstacle at $visitedPosition".println()
                 newObstacles.add(visitedPosition)
             }
             obstaclesCoordinates.remove(visitedPosition)
@@ -205,15 +205,16 @@ fun main() {
     val testInput = readInput("Day06_test")
 
 //    println("Part 1 with testInput: ${part1(testInput)}")
-    val visitedPostions = part1(testInput)
-    check(visitedPostions.size == 41)
-    check(part2(testInput, visitedPostions) == 6)
+    val testVisitedPostions = part1(testInput)
+    check(testVisitedPostions.size == 41)
+    check(part2(testInput, testVisitedPostions) == 6)
 
     // Read the input from the `src/Day01.txt` file.
     val input = readInput("Day06")
 //    "Part 1 ".println()
-//    part1(input).println()
+    val realVisitedPostions = part1(input)
+    realVisitedPostions.println()
     "Part 2 ".println()
-    part2(input, visitedPostions).println()
+    part2(input, realVisitedPostions).println()
 
 }
